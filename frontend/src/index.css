@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Modern Scrollbar */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full transition-colors hover:bg-gray-400 dark:hover:bg-gray-500;
+  }
+
+  /* Global Scrollbar styling for a consistent premium feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300/80 dark:bg-gray-700/80 rounded-full backdrop-blur-sm border-2 border-transparent bg-clip-content hover:bg-gray-400 dark:hover:bg-gray-600;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
