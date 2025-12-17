@@ -1,119 +1,100 @@
 # 🎓 Sistem Informasi Dinas Pendidikan (SIPENDIK)
 
-Platform modern untuk pengelolaan **Dana BOS (Bantuan Operasional Sekolah)** dan **Arsip Digital Ijazah**, dilengkapi dengan analisis cerdas menggunakan metode K-Means Clustering.
+**SIPENDIK** adalah platform digital terintegrasi yang dirancang untuk memodernisasi manajemen pendidikan di Dinas Pendidikan. Sistem ini menggabungkan pengelolaan **Dana Bantuan Operasional Sekolah (BOS)** berbasis kecerdasan buatan dan **Arsip Digital Ijazah** yang aman dan terstruktur.
 
-![Project Status](https://img.shields.io/badge/Status-Active-success)
-![Version](https://img.shields.io/badge/Version-1.0.0-blue)
-![Tech](https://img.shields.io/badge/Tech-React%20%7C%20Vite%20%7C%20PHP-violet)
-
-## ✨ Fitur Unggulan
-
-### 💰 Manajemen Dana BOS & K-Means
-
-- **Smart Clustering**: Mengelompokkan sekolah berdasarkan prioritas perbaikan (Tinggi/Sedang/Rendah) menggunakan algoritma **K-Means**.
-- **Analisis Multi-Variabel**: Memperhitungkan 5 dimensi data (Siswa, Guru, Rombel, Dana BOS, Kerusakan).
-- **Alur Verifikasi Digital**:
-  - **Operator Sekolah**: Input & Upload bukti BKU.
-  - **Admin/Verifikator**: Review, Approve, atau Reject (dengan catatan revisi).
-
-### 📜 E-Arsip Ijazah Digital
-
-- **Penyimpanan Terpusat**: Digitalisasi ijazah siswa dari SD, SMP, hingga SMA/SMK.
-- **Smart Filtering**: Pencarian canggih berdasarkan:
-  - Jenjang (SD/SMP/SMA/SMK) _otomatis mendeteksi data database_
-  - Nama Sekolah
-  - Tahun Lulus
-  - Nama Siswa / NISN
-- **Akses Aman**: Keamanan file terjamin dengan format penamaan unik.
-
-### 🔐 Keamanan & User Management
-
-Sistem Multi-Role yang terintegrasi:
-
-1. **Super Admin**: Akses penuh ke seluruh sistem.
-2. **Admin BOS**: Fokus pada verifikasi dan monitoring dana BOS.
-3. **Admin Ijazah**: Pengelola arsip ijazah sekolah.
-4. **Operator Sekolah**: Akses terbatas hanya untuk data sekolahnya sendiri (Privacy Protected).
+![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20PHP%20%7C%20MySQL-blue)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+## 🌟 Fitur Utama & Modul
 
-### Frontend (Client-Side)
+### 1. 💰 Manajemen Data BOS & Analisis Cerdas (K-Means)
 
-- **Framework**: [React.js](https://react.dev/) + [Vite](https://vitejs.dev/) (Super Cepat)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) (Modern UI)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Charts**: [Recharts](https://recharts.org/) (Visualisasi Data)
-- **Alerts**: [SweetAlert2](https://sweetalert2.github.io/)
-- **Network**: [Axios](https://axios-http.com/)
+Modul ini membantu Dinas Pendidikan dalam memetakan prioritas perbaikan sekolah secara objektif menggunakan algoritma _Machine Learning_.
 
-### Backend (Server-Side)
+- **📊 Dashboard Eksekutif**: Ringkasan statistik total dana, sebaran sekolah, dan status perbaikan dalam bentuk grafik interaktif.
+- **📥 Input Data Fleksibel**:
+  - Upload data massal via Excel/CSV.
+  - Input manual dengan validasi _real-time_.
+- **🤖 Clustering K-Means Otomatis**:
+  - Mengelompokkan sekolah ke dalam 3 klaster prioritas: **Tinggi, Sedang, Rendah**.
+  - Analisis berbasis 5 dimensi: Jumlah Siswa, Guru, Rombel, Dana BOS, dan Tingkat Kerusakan.
+  - **Auto-Labeling**: Sistem cerdas yang menamai klaster berdasarkan karakteristik data (bukan sekadar C1/C2/C3).
+- **📉 Visualisasi Data**: Scatter Plot & Bar Chart untuk membandingkan posisi sekolah antar klaster.
+- **🏫 Master Data Fasilitas**: Standarisasi jenis kerusakan dan fasilitas untuk pelaporan yang konsisten.
 
-- **Language**: PHP Native (REST API Architecture)
-- **Database**: MySQL / MariaDB
-- **Encryption**: XOR + Base64 (Untuk keamanan file)
+### 2. 📜 E-Arsip Ijazah & SKPI (Surat Keterangan Pendamping Ijazah)
 
----
+Solusi _end-to-end_ untuk penyimpanan, pencarian, dan penerbitan dokumen kelulusan yang valid dan aman.
 
-## 🚀 Panduan Instalasi (Frontend)
+- **🔍 Smart Search & Filtering**: Pencarian ijazah super cepat berdasarkan NISN, Nama, Sekolah, atau Tahun Lulus.
+- **📂 Manajemen Arsip Digital**:
+  - Upload hasil scan ijazah asli.
+  - Penyimpanan terstruktur dengan validasi dokumen.
+- **🛡️ Penerbitan SKPI (SOP Compliant)**:
+  - **Alur Pengajuan**: Operator sekolah mengajukan SKPI dengan melampirkan **Surat Keterangan Kehilangan Kepolisian**.
+  - **Verifikasi Bertingkat**: Admin Dinas memverifikasi dokumen sebelum menyetujui (Approve) atau menolak (Reject) dengan alasan.
+  - **Cetak Secure**: SKPI hanya bisa dicetak setelah disetujui, dilengkapi dengan sistem pengomoran otomatis dan token keamanan.
 
-Ikuti langkah berikut untuk menjalankan aplikasi di komputer lokal:
+### 3. 🔐 Keamanan & Hak Akses (Role-Based Access Control)
 
-### 1. Prasyarat
+Sistem dilengkapi dengan keamanan tingkat tinggi untuk melindungi data sensitif siswa dan sekolah.
 
-Pastikan komputer Anda sudah terinstall:
-
-- [Node.js](https://nodejs.org/) (Versi 16 ke atas recommended)
-- [Git](https://git-scm.com/)
-
-### 2. Clone & Install
-
-```bash
-# Masuk ke folder frontend
-cd frontend
-
-# Install dependencies (library)
-npm install
-```
-
-### 3. Menjalankan Aplikasi
-
-```bash
-# Jalankan mode development
-npm run dev
-```
-
-Aplikasi akan berjalan di `http://localhost:5173` (biasanya).
-
-### 4. Build untuk Produksi
-
-Jika ingin menaruh aplikasi di server hosting:
-
-```bash
-npm run build
-```
+- **Role Management**:
+  1.  **🦸‍♂️ Super Admin**: Kontrol penuh atas sistem, user, dan konfigurasi global.
+  2.  **👮 Admin Ijazah**: Otoritas khusus untuk verifikasi SKPI dan manajemen arsip ijazah.
+  3.  **👮 Admin BOS**: Otoritas khusus untuk verifikasi SKPI dan manajemen arsip ijazah.
+  4.  **🏢 Operator Sekolah**: Akses terbatas untuk mengelola data sekolahnya sendiri (Privacy Protected).
+- **Secure Authentication**: Login menggunakan Token JWT (JSON Web Token) dengan enkripsi password Bcrypt.
+- **Secure Downloads**: Link download file dilindungi token verifikasi (mencegah akses langsung tanpa login).
 
 ---
 
-## 📂 Struktur Project
+## 🛠️ Stack Teknologi
 
-```
-frontend/
-├── src/
-│   ├── components/  # Komponen UI yang bisa dipakai ulang
-│   ├── context/     # AuthProvider (Login logic)
-│   ├── layouts/     # Sidebar & Topbar layout
-│   ├── pages/       # Halaman utama (Dashboard, DataBOS, dll)
-│   ├── services/    # Koneksi ke API Backend
-│   └── utils/       # Fungsi bantuan
-└── vite.config.js   # Konfigurasi Vite
-```
+Aplikasi ini dibangun menggunakan teknologi modern yang menjamin kecepatan, skalabilitas, dan kemudahan perawatan.
+
+### Frontend (Antarmuka Pengguna)
+
+- **Framework**: [React.js](https://react.dev/) (dengan Vite untuk performa kilat).
+- **Desain UI**: **Glassmorphism Premium** menggunakan [Tailwind CSS](https://tailwindcss.com/).
+- **Ikon**: [Lucide React](https://lucide.dev/) (Ikon vektor modern & ringan).
+- **Interaktivitas**:
+  - **SweetAlert2** untuk notifikasi yang elegan.
+  - **Recharts** untuk visualisasi data statistik yang dinamis.
+  - **Framer Motion** untuk animasi transisi yang halus.
+
+### Backend (Server & Database)
+
+- **Bahasa**: PHP Native (Terstruktur dengan pola MVC & REST API).
+- **Database**: MySQL / MariaDB (Relasional).
+- **Keamanan**:
+  - **CORS Protection**: Proteksi ketat terhadap akses lintas domain yang tidak sah.
+  - **SQL Injection Prevention**: Menggunakan PDO Prepared Statements.
+  - **Secure Token**: Enkripsi XOR + Base64 untuk validasi dokumen.
 
 ---
 
-## 👨‍💻 Author
+## 🔄 Alur Kerja Sistem (Workflow)
 
-Dikembangkan oleh **BlueVirus9735** untuk kebutuhan digitalisasi Dinas Pendidikan.
+### 🔹 Alur Clustering BOS
 
-> _"Pendidikan adalah senjata paling ampuh untuk mengubah dunia."_ - Nelson Mandela
+1.  **Input**: Data kondisi sekolah diinput ke sistem (via Excel/Form).
+2.  **Processing**: Algoritma K-Means menghitung jarak centroid dan mengelompokkan data.
+3.  **Result**: Sekolah dilabeli "Prioritas Tinggi/Sedang/Rendah".
+4.  **Decision**: Dinas menggunakan data ini untuk alokasi perbaikan.
+
+### 🔹 Alur Penerbitan SKPI (SOP)
+
+1.  **Permohonan**: Orang tua melapor ke sekolah -> Operator Sekolah upload Surat Polisi ke sistem.
+2.  **Verifikasi**: Status pengajuan menjadi "Pending" (Kuning). Admin Dinas menerima notifikasi.
+3.  **Validasi Admin**:
+    - Jika dokumen lengkap -> Klik **Approve** (Status jadi "Approved"/Hijau).
+    - Jika kurang -> Klik **Reject** (Status jadi "Rejected"/Merah).
+4.  **Pencetakan**: Tombol **"Cetak SKPI"** hanya muncul di akun Operator setelah status "Approved".
+5.  **Output**: Dokumen PDF resmi dengan Tanda Tangan Kadis & Token Keamanan.
+
+---
+
+> _"Digitalisasi Pendidikan untuk Masa Depan yang Lebih Baik."_
