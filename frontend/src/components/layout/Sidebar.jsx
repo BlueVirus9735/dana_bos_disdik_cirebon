@@ -12,6 +12,7 @@ import {
   PieChart,
   Users,
   ShieldCheck,
+  Calculator,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
@@ -20,7 +21,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState({
-    ijazah: true,
     bos: true,
   });
 
@@ -42,7 +42,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
       name: "Dashboard",
       path: "/dashboard",
       icon: LayoutDashboard,
-      roles: ["super_admin", "admin_ijazah", "admin_bos"],
+      roles: ["super_admin", "admin_bos"],
     },
     {
       type: "link",
@@ -51,37 +51,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
       icon: Users,
       roles: ["super_admin"],
     },
-    {
-      type: "group",
-      id: "ijazah",
-      label: "Ijazah",
-      icon: FileText,
-      roles: [
-        "super_admin",
-        "admin_ijazah",
-        "operator_sekolah",
-        "operator_ijazah",
-      ],
-      items: [
-        {
-          name: "Data Ijazah",
-          path: "/data-ijazah",
-          icon: Database,
-          roles: [
-            "super_admin",
-            "admin_ijazah",
-            "operator_sekolah",
-            "operator_ijazah",
-          ],
-        },
-        {
-          name: "Upload Baru",
-          path: "/upload-ijazah",
-          icon: Upload,
-          roles: ["admin_ijazah", "operator_sekolah", "operator_ijazah"],
-        },
-      ],
-    },
+
     {
       type: "group",
       id: "bos",
@@ -116,6 +86,12 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
           name: "Visualisasi",
           path: "/visualisasi",
           icon: LayoutDashboard,
+          roles: ["super_admin", "admin_bos", "operator_bos"],
+        },
+        {
+          name: "Simulasi Anggaran",
+          path: "/simulasi",
+          icon: Calculator,
           roles: ["super_admin", "admin_bos", "operator_bos"],
         },
       ],

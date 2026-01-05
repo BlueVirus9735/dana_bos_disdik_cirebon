@@ -101,7 +101,7 @@ class EvaluasiBosModel {
     }
 
     public function getDataForClustering($tahun) {
-        $sql = "SELECT id, jumlah_siswa, jumlah_guru, jumlah_rombel, dana_bos, kondisi_fasilitas_rusak, detail_kerusakan 
+        $sql = "SELECT id, sekolah_id, jumlah_siswa, jumlah_guru, jumlah_rombel, dana_bos, kondisi_fasilitas_rusak, detail_kerusakan 
                 FROM data_evaluasi_bos WHERE tahun = :tahun AND status = 'APPROVED'";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':tahun' => $tahun]);

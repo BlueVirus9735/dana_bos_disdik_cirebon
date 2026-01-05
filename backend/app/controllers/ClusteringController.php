@@ -88,17 +88,12 @@ class ClusteringController {
         // Balanced Formula: Equity + Impact + Need
         usort($clusterIndices, function($a, $b) use ($centroids) {
             $calcScore = function($c) {
-                // x5 (Index 4): Skor Kerusakan -> Bobot 3.0 (Tetap Raja)
-                // x3 (Index 2): Dana BOS -> Bobot 2.5 (Inverse: Makin miskin makin prioritas)
-                // x1 (Index 0): Jumlah Siswa -> Bobot 1.5 (BOOST NAIK: Biar sekolah padat lebih diperhatikan)
-                // x6 (Index 5): Jumlah Item -> Bobot 1.5
-                // x4 (Index 3): Rombel -> Bobot 1.0
-                
-                $skorScore    = $c[4] * 3.0;
-                $fundScore    = (1.0 - $c[2]) * 2.5;
-                $studentScore = $c[0] * 1.5; 
-                $itemScore    = $c[5] * 1.5;
-                $rombelScore  = $c[3] * 1.0;
+                // REBALANCED WEIGHTS (PHASE 2 - Synchronized)
+                $skorScore    = $c[4] * 4.0;         // Rusak
+                $fundScore    = (1.0 - $c[2]) * 5.0; // Miskin (Boosted)
+                $studentScore = $c[0] * 0.5;         // Siswa (Reduced)
+                $itemScore    = $c[5] * 0.5;
+                $rombelScore  = $c[3] * 0.5;
                 
                 return $skorScore + $fundScore + $studentScore + $itemScore + $rombelScore;
             };
@@ -150,6 +145,17 @@ class ClusteringController {
                 "silhouette_score" => $score
             ]
         ]);
+    }
+
+    public function trend() {
+        $model = new ClusteringModel();
+        $data = $model->getTrendStats();
+        
+        if (!empty($data)) {
+            echo json_encode(["status" => "success", "data" => $data]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Belum ada data history clustering"]);
+        }
     }
 
     public function results() {
@@ -431,6 +437,175 @@ class ClusteringController {
             echo json_encode(["status" => "success", "message" => "Status berhasil diperbarui menjadi " . $input['status']]);
         } catch (Exception $e) {
              echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+        }
+    }
+
+    public function simulate() {
+        // "What-If" Analysis: Run K-Means with modified parameters for ONE school
+        // and see how it affects the clustering result.
+        
+        $input = json_decode(file_get_contents("php://input"), true);
+        
+        // Required: sekolah_id, and the modified metrics
+        if (!isset($input['sekolah_id']) || !isset($input['params'])) {
+             echo json_encode(["status" => "error", "message" => "Input simulasi tidak lengkap"]);
+             return;
+        }
+
+        $targetSekolahId = $input['sekolah_id'];
+        $params = $input['params']; 
+        $k = isset($input['k']) ? (int)$input['k'] : 3;
+        
+        $evalModel = new EvaluasiBosModel();
+
+        // INTELLIGENT YEAR DETECTION
+        // 1. If year provided in input, use it.
+        // 2. If not, look up the most recent year for this specific school in the database.
+        $tahun = isset($input['tahun']) ? (int)$input['tahun'] : null;
+
+        if (!$tahun) {
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT tahun FROM data_evaluasi_bos WHERE sekolah_id = :sekolah_id ORDER BY tahun DESC LIMIT 1");
+            $stmt->execute([':sekolah_id' => $targetSekolahId]);
+            $row = $stmt->fetch();
+            
+            if ($row) {
+                $tahun = (int)$row['tahun'];
+            } else {
+                // Should not happen if school exists in list, but fallback just in case
+                $tahun = (int)date('Y'); 
+            }
+        }
+        
+        $rawData = $evalModel->getDataForClustering($tahun);
+        
+        if (empty($rawData)) {
+             echo json_encode(["status" => "error", "message" => "Tidak ada data evaluasi untuk tahun $tahun"]);
+             return;
+        }
+
+        if (empty($rawData)) {
+            echo json_encode(["status" => "error", "message" => "Tidak ada data untuk tahun $tahun"]);
+            return;
+        }
+
+        // 1. Prepare Dataset & Swap with Simulated Values
+        $dataset = [];
+        $idMapping = []; 
+        $targetIndex = -1;
+
+        foreach ($rawData as $index => $row) {
+            $isTarget = ($row['sekolah_id'] == $targetSekolahId);
+            
+            // ... (rest of logic)
+            // Default Values from DB
+            $jSiswa = (float)$row['jumlah_siswa'];
+            $jGuru = (float)$row['jumlah_guru'];
+            $danaBos = (float)$row['dana_bos'];
+            $jRombel = (float)$row['jumlah_rombel'];
+            $jRusak = (float)$row['kondisi_fasilitas_rusak'];
+            
+            // Calc facilities total
+            $jFasilitas = 0;
+            if (!empty($row['detail_kerusakan'])) {
+                $details = json_decode($row['detail_kerusakan'], true);
+                if (is_array($details)) {
+                    foreach ($details as $item) {
+                        $jFasilitas += isset($item['count']) ? (int)$item['count'] : 0;
+                    }
+                }
+            }
+
+            // SWAP WITH SIMULATION PARAMS IF TARGET
+            if ($isTarget) {
+                $targetIndex = $index;
+                
+                if (isset($params['jumlah_siswa'])) $jSiswa = (float)$params['jumlah_siswa'];
+                if (isset($params['dana_bos'])) $danaBos = (float)$params['dana_bos'];
+                if (isset($params['kondisi_fasilitas_rusak'])) $jRusak = (float)$params['kondisi_fasilitas_rusak'];
+            }
+
+            $dataset[] = [$jSiswa, $jGuru, $danaBos, $jRombel, $jRusak, (float)$jFasilitas];
+            $idMapping[$index] = $row['id'];
+        }
+        
+        // 2. Normalisasi
+        $numFeatures = 6;
+        $min = array_fill(0, $numFeatures, PHP_FLOAT_MAX);
+        $max = array_fill(0, $numFeatures, PHP_FLOAT_MIN);
+
+        foreach ($dataset as $row) {
+            for ($i = 0; $i < $numFeatures; $i++) {
+                if ($row[$i] < $min[$i]) $min[$i] = $row[$i];
+                if ($row[$i] > $max[$i]) $max[$i] = $row[$i];
+            }
+        }
+
+        $normalizedDataset = [];
+        foreach ($dataset as $row) {
+            $normalizedRow = [];
+            for ($i = 0; $i < $numFeatures; $i++) {
+                $denom = $max[$i] - $min[$i];
+                $normalizedRow[$i] = ($denom == 0) ? 0 : ($row[$i] - $min[$i]) / $denom;
+            }
+            $normalizedDataset[] = $normalizedRow;
+        }
+
+        // 3. Run K-Means
+        $kmeans = new KMeans($k);
+        $result = $kmeans->fit($normalizedDataset);
+        
+        // 4. Determine Priority Labels (Copy logic from process())
+        $centroids = $result['centroids']; 
+        $clusterIndices = array_keys($centroids);
+        
+        usort($clusterIndices, function($a, $b) use ($centroids) {
+            $calcScore = function($c) {
+                // REBALANCED WEIGHTS (PHASE 2)
+                // Goal: Wealth (Dana BOS) must powerfully REDUCE priority.
+                
+                $skorScore    = $c[4] * 4.0;         // Rusak (High)
+                $fundScore    = (1.0 - $c[2]) * 5.0; // Miskin (VERY High) - Richness kills priority
+                $studentScore = $c[0] * 0.5;         // Siswa (Low) - Size matters less
+                $itemScore    = $c[5] * 0.5;
+                $rombelScore  = $c[3] * 0.5;
+                
+                return $skorScore + $fundScore + $studentScore + $itemScore + $rombelScore;
+            };
+            
+            return $calcScore($centroids[$a]) <=> $calcScore($centroids[$b]);
+        });
+
+        $mapping = []; 
+        foreach ($clusterIndices as $newLabel => $oldId) {
+            $mapping[$oldId] = $newLabel;
+        }
+
+        // 5. Get Result for Target School
+        if ($targetIndex !== -1) {
+            $rawClusterId = $result['assignments'][$targetIndex];
+            $finalClusterLabel = $mapping[$rawClusterId];
+            
+            // Also return the original cluster if possible (fetch from last saved detail)
+            // But for now, we just return the "Simulated" result.
+            
+            $kategoriNames = [
+                0 => "Prioritas Rendah",
+                1 => "Prioritas Sedang",
+                2 => "Prioritas Tinggi"
+            ];
+
+            echo json_encode([
+                "status" => "success",
+                "data" => [
+                    "cluster_label" => $finalClusterLabel,
+                    "kategori" => $kategoriNames[$finalClusterLabel] ?? "Cluster $finalClusterLabel",
+                    "centroid_profile" => $dataset[$targetIndex], // Return raw values processed
+                    "normalized_profile" => $normalizedDataset[$targetIndex]
+                ]
+            ]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Target sekolah tidak ditemukan di dataset"]);
         }
     }
 

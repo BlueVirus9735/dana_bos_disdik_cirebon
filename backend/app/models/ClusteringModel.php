@@ -43,12 +43,27 @@ class ClusteringModel {
         $riwayat = $stmt->fetch();
         
         if ($riwayat) {
-            $sqlDetails = "SELECT d.*, s.nama_sekolah, s.npsn 
+            // Enhanced query to fetch feature data for visualization
+            $sqlDetails = "SELECT 
+                                d.*, 
+                                s.nama_sekolah, 
+                                s.npsn,
+                                e.jumlah_siswa,
+                                e.jumlah_guru,
+                                e.jumlah_rombel,
+                                e.dana_bos,
+                                e.kondisi_fasilitas_rusak,
+                                e.akreditasi
                            FROM detail_clustering d 
                            JOIN sekolah_bos s ON d.sekolah_id = s.id 
+                           LEFT JOIN data_evaluasi_bos e ON (e.sekolah_id = d.sekolah_id AND e.tahun = :tahun)
                            WHERE d.riwayat_id = :riwayat_id";
+            
             $stmtDetails = $this->db->prepare($sqlDetails);
-            $stmtDetails->execute([':riwayat_id' => $riwayat['id']]);
+            $stmtDetails->execute([
+                ':riwayat_id' => $riwayat['id'],
+                ':tahun' => $tahun // Correct binding for LEFT JOIN condition
+            ]);
             $details = $stmtDetails->fetchAll();
             return ['riwayat' => $riwayat, 'details' => $details];
         }
@@ -60,16 +75,72 @@ class ClusteringModel {
         $riwayat = $stmt->fetch();
         
         if ($riwayat) {
-            $sqlDetails = "SELECT d.*, s.nama_sekolah, s.npsn 
+            // Extract year from description to join with correct evaluation data
+            $tahun = date('Y'); // Fallback
+            if (preg_match('/Tahun\s+(\d{4})/', $riwayat['keterangan'], $matches)) {
+                $tahun = $matches[1];
+            }
+
+            // Enhanced query to fetch feature data for visualization
+            $sqlDetails = "SELECT 
+                                d.*, 
+                                s.nama_sekolah, 
+                                s.npsn,
+                                e.jumlah_siswa,
+                                e.jumlah_guru,
+                                e.jumlah_rombel,
+                                e.dana_bos,
+                                e.kondisi_fasilitas_rusak,
+                                e.akreditasi
                            FROM detail_clustering d 
                            JOIN sekolah_bos s ON d.sekolah_id = s.id 
+                           LEFT JOIN data_evaluasi_bos e ON (e.sekolah_id = d.sekolah_id AND e.tahun = :tahun)
                            WHERE d.riwayat_id = :riwayat_id";
+
             $stmtDetails = $this->db->prepare($sqlDetails);
-            $stmtDetails->execute([':riwayat_id' => $riwayat['id']]);
+            $stmtDetails->execute([
+                ':riwayat_id' => $riwayat['id'],
+                ':tahun' => $tahun
+            ]);
             $details = $stmtDetails->fetchAll();
             return ['riwayat' => $riwayat, 'details' => $details];
         }
         return null;
+    }
+    public function getTrendStats() {
+        // Fetch all history records ordered by date
+        $stmt = $this->db->query("SELECT id, keterangan, tanggal_proses FROM riwayat_clustering ORDER BY tanggal_proses ASC");
+        $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $trendData = [];
+
+        foreach ($history as $record) {
+            // Extract year from description
+            $year = date('Y', strtotime($record['tanggal_proses'])); // Default to timestamp year
+            if (preg_match('/Tahun\s+(\d{4})/', $record['keterangan'], $matches)) {
+                $year = $matches[1];
+            }
+
+            // Count schools per cluster for this history record
+            $sqlCount = "SELECT cluster_label, COUNT(*) as total 
+                         FROM detail_clustering 
+                         WHERE riwayat_id = :riwayat_id 
+                         GROUP BY cluster_label";
+            $stmtCount = $this->db->prepare($sqlCount);
+            $stmtCount->execute([':riwayat_id' => $record['id']]);
+            $counts = $stmtCount->fetchAll(PDO::FETCH_KEY_PAIR); // [label => total]
+
+            // Normalize counts (ensure 0, 1, 2 exist)
+            // Assuming 0=Low, 1=Medium, 2=High
+            $trendData[] = [
+                'year' => $year,
+                'low' => isset($counts[0]) ? (int)$counts[0] : 0,
+                'medium' => isset($counts[1]) ? (int)$counts[1] : 0,
+                'high' => isset($counts[2]) ? (int)$counts[2] : 0
+            ];
+        }
+
+        return $trendData;
     }
 }
 ?>

@@ -8,13 +8,13 @@ import {
 import Login from "../pages/Login";
 import Home from "../pages/Home";
 import MainLayout from "../layouts/MainLayout";
-import DataIjazah from "../pages/DataIjazah";
-import UploadIjazah from "../pages/UploadIjazah";
+
 import Dashboard from "../pages/Dashboard";
 import DataBOS from "../pages/DataBOS";
 import ProsesKMeans from "../pages/ProsesKMeans";
 import HasilKlaster from "../pages/HasilKlaster";
 import Visualisasi from "../pages/Visualisasi";
+import Simulasi from "../pages/Simulasi";
 import Laporan from "../pages/Laporan";
 import UserManagement from "../pages/UserManagement";
 import { AuthProvider, useAuth } from "../context/AuthContext";
@@ -71,39 +71,7 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/data-ijazah"
-            element={
-              <ProtectedRoute
-                allowedRoles={[
-                  "super_admin",
-                  "admin_ijazah",
-                  "operator_sekolah",
-                  "operator_ijazah",
-                ]}
-              >
-                <MainLayout>
-                  <DataIjazah />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/upload-ijazah"
-            element={
-              <ProtectedRoute
-                allowedRoles={[
-                  "admin_ijazah",
-                  "operator_sekolah",
-                  "operator_ijazah",
-                ]}
-              >
-                <MainLayout>
-                  <UploadIjazah />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/data-bos"
             element={
@@ -158,11 +126,19 @@ export default function AppRouter() {
             }
           />
           <Route
+            path="/simulasi"
+            element={
+              <ProtectedRoute allowedRoles={["super_admin", "admin_bos"]}>
+                <MainLayout>
+                  <Simulasi />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/laporan"
             element={
-              <ProtectedRoute
-                allowedRoles={["super_admin", "admin_ijazah", "admin_bos"]}
-              >
+              <ProtectedRoute allowedRoles={["super_admin", "admin_bos"]}>
                 <MainLayout>
                   <Laporan />
                 </MainLayout>
