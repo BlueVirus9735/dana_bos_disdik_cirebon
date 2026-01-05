@@ -1,6 +1,6 @@
-# 🎓 Sistem Informasi Dinas Pendidikan (SIPENDIK) - Clustering & Arsip Digital
+# 🎓 Sistem Informasi Dinas Pendidikan (SIPENDIK) - Clustering Dana BOS
 
-**SIPENDIK** adalah platform digital terintegrasi Modern untuk Dinas Pendidikan yang menggabungkan kecerdasan buatan (**K-Means Clustering**) untuk pemetaan dana BOS dan sistem **Arsip Digital Ijazah/SKPI** yang aman.
+**SIPENDIK** adalah platform digital modern yang dirancang untuk Dinas Pendidikan guna mengoptimalkan penyaluran dan pemetaan **Dana Bantuan Operasional Sekolah (BOS)** menggunakan kecerdasan buatan (**K-Means Clustering**).
 
 ![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20PHP%20%7C%20MySQL-blue?style=for-the-badge&logo=react)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
@@ -11,36 +11,28 @@
 
 ### 1. 💰 Smart BOS Clustering (K-Means)
 
-Sistem pendukung keputusan untuk menentukan prioritas bantuan sekolah secara objektif.
+Sistem pendukung keputusan cerdas untuk menentukan prioritas bantuan sekolah secara objektif dan berbasis data.
 
-- **🤖 Algoritma K-Means**: Mengelompokkan sekolah menjadi 3 klaster (Prioritas Tinggi, Sedang, Rendah) berdasarkan:
-  - Jumlah Siswa & Guru
-  - Dana BOS Diterima
-  - Tingkat Kerusakan Fasilitas
+- **🤖 Algoritma K-Means Otomatis**:
+  - Mengelompokkan sekolah menjadi 3 klaster prioritas: **Tinggi, Sedang, Rendah**.
+  - Analisis berbasis multi-dimensi: Jumlah Siswa & Guru, Dana BOS, dan Tingkat Kerusakan Fasilitas.
+  - **Auto-Labeling**: Sistem otomatis memberikan label deskriptif pada setiap cluster.
 - **📊 Visualisasi Data Interaktif**:
-  - _New!_ **Radar Chart Diagnosa**: Analisis mendalam karakteristik per sekolah vs rata-rata cluster.
-  - **Drill-down Exploration**: Cari dan filter sekolah berdasarkan nama/NPSN langsung dari grafik.
-  - **Trend Analysis**: Grafik tren perubahan kondisi sekolah dari waktu ke waktu.
+  - **Radar Chart Diagnosa**: Membandingkan karakteristik spesifik sekolah dengan rata-rata clusternya.
+  - **Drill-down Exploration**: Fitur pencarian dan filter mendalam untuk menelusuri data sekolah per cluster.
+  - **Trend Analysis**: Grafik tren untuk memantau perubahan kondisi sekolah antar periode.
 - **🧮 Simulasi Anggaran ("What-If")**:
-  - Prediksi dampak perubahan anggaran terhadap skor prioritas sekolah.
-  - Alat bantu perencanaan strategis bagi Dinas Pendidikan.
+  - Memprediksi dampak perubahan anggaran atau perbaikan fasilitas terhadap skor prioritas.
+  - Alat strategis untuk perencanaan alokasi dana yang lebih efektif.
 
-### 2. 📜 E-Arsip Ijazah & Penerbitan SKPI
+### 2. � Manajemen Akses & Keamanan
 
-Solusi end-to-end untuk manajemen dokumen kelulusan yang valid.
-
-- **🔍 Smart Search**: Pencarian ijazah hitungan detik (Nama, NISN, Sekolah).
-- **📝 Workflow SKPI**:
-  - Pengajuan oleh Operator Sekolah (Upload Surat Hilang Kepolisian).
-  - Verifikasi & Approval oleh Admin Dinas.
-  - Cetak **Surat Keterangan Pengganti Ijazah (SKPI)** dengan nomor seri otomatis.
-- **🛡️ Keamanan Dokumen**: Enkripsi token untuk validasi keaslian dokumen.
-
-### 3. 🔐 Manajemen Akses & Keamanan
-
-- **Multi-Role**: Super Admin, Admin BOS, Admin Ijazah, dan Operator Sekolah.
-- **JWT Authentication**: Login aman dengan enkripsi standar industri.
-- **Audit Log**: Mencatat aktivitas pengguna penting.
+- **Role Management**:
+  - **Super Admin**: Akses penuh sistem.
+  - **Admin BOS**: Verifikasi data dan pengaturan parameter clustering.
+  - **Operator Sekolah**: Manajemen data sekolah masing-masing.
+- **Security**: Autentikasi berbasis JWT (JSON Web Token) dengan enkripsi password yang aman.
+- **Audit Log**: Pencatatan riwayat aktivitas pengguna untuk transparansi.
 
 ---
 
@@ -48,18 +40,15 @@ Solusi end-to-end untuk manajemen dokumen kelulusan yang valid.
 
 ### Frontend (Modern UI/UX)
 
-- **Framework**: [React.js](https://react.dev/) + [Vite](https://vitejs.dev/) (Super Cepat)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) (Desain Responsif & Clean)
-- **Visualisasi**:
-  - [Recharts](https://recharts.org/) (Grafik Dinamis & Radar Chart)
-  - [Lucide React](https://lucide.dev/) (Ikon Vektor Modern)
-- **Komponen UI**: Headless UI, Framer Motion (Animasi Halus).
+- **Framework**: [React.js](https://react.dev/) + [Vite](https://vitejs.dev/)
+- **Desain**: [Tailwind CSS](https://tailwindcss.com/) (Glassmorphism & Responsive)
+- **Visualisasi**: [Recharts](https://recharts.org/) (Grafik Interaktif)
 
-### Backend (Robust API)
+### Backend (Performance)
 
-- **Bahasa**: PHP Native (Optimised for Performance, MVC Pattern).
-- **Database**: MySQL / MariaDB.
-- **API**: RESTful Architecture dengan respon JSON standar.
+- **Bahasa**: PHP Native (Struktur MVC)
+- **Database**: MySQL / MariaDB
+- **Algoritma**: K-Means Clustering dengan Euclidean Distance
 
 ---
 
@@ -70,7 +59,6 @@ Solusi end-to-end untuk manajemen dokumen kelulusan yang valid.
 - Node.js (v16+)
 - PHP (v7.4 / v8.0+)
 - MySQL Server
-- Composer (Opsional)
 
 ### Langkah Instalasi
 
@@ -83,9 +71,8 @@ Solusi end-to-end untuk manajemen dokumen kelulusan yang valid.
 
 2. **Setup Backend**
 
-   - Import database `db_disdik.sql` (jika ada) ke MySQL.
-   - Sesuaikan konfigurasi database di `backend/config/database.php`.
-   - Pastikan folder `backend/uploads` memiliki izin tulis (write permission).
+   - Import database `db_disdik.sql` (jika ada).
+   - Atur koneksi database di `backend/config/database.php`.
 
 3. **Setup Frontend**
 
@@ -95,17 +82,14 @@ Solusi end-to-end untuk manajemen dokumen kelulusan yang valid.
    ```
 
 4. **Menjalankan Aplikasi**
-   - **Backend**: Pastikan server PHP berjalan (contoh via Laragon/XAMPP).
-   - **Frontend**:
-     ```bash
-     npm run dev
-     ```
-   - Akses aplikasi di `http://localhost:5173`.
+   - **Backend**: Pastikan service PHP/MySQL berjalan.
+   - **Frontend**: `npm run dev`
+   - Buka browser di `http://localhost:5173`.
 
 ---
 
 ## 👥 Kontribusi
 
-Dikembangkan oleh Tim Pengembang untuk Dinas Pendidikan.
+Dikembangkan untuk mendukung transparansi dan efektivitas pengelolaan dana pendidikan.
 
-> _"Mewujudkan Pengelolaan Pendidikan yang Transparan, Efektif, dan Berbasis Data."_
+> _"Keputusan Berbasis Data untuk Kualitas Pendidikan yang Lebih Baik."_
