@@ -40,8 +40,6 @@ export default function DataBOS() {
     setFile(e.target.files[0]);
   };
 
-  // ... (previous logic)
-
   const handleEdit = (item) => {
     setEditItem(item);
     setIsEditing(true);
@@ -100,22 +98,6 @@ export default function DataBOS() {
           onUpload={onUploadClick}
           isUploading={uploading}
         />
-      )}
-      {user?.role !== "operator_sekolah" && (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <input
-            type="file"
-            accept=".xlsx,.xls,.csv"
-            onChange={onFileSelected}
-            className="block w-full text-sm text-gray-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-full file:border-0
-              file:text-sm file:font-semibold
-              file:bg-indigo-50 file:text-indigo-700
-              hover:file:bg-indigo-100
-            "
-          />
-        </div>
       )}
 
       <BOSTable

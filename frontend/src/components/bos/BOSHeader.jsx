@@ -31,7 +31,7 @@ export default function BOSHeader({
             className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-semibold transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5"
           >
             <Plus className="w-5 h-5" />
-            <span>Tambah Manual</span>
+            <span>Tambah</span>
           </button>
         )}
         <button
